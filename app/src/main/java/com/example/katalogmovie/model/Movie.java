@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable {
-    String key, judul, rilis, deskripsi, image, rating, vote;
+    public String key, judul, rilis, deskripsi, image, rating, vote;
 
     public String getKey() {
         return key;
@@ -81,8 +81,8 @@ public class Movie implements Parcelable {
     public Movie() {
     }
 
-    public Movie(String key, String judul, String rilis, String deskripsi, String image, String rating, String vote) {
-        this.key = key;
+    public Movie(String id, String judul, String rilis, String deskripsi, String image, String rating, String vote) {
+        this.key = id;
         this.judul = judul;
         this.rilis = rilis;
         this.deskripsi = deskripsi;
