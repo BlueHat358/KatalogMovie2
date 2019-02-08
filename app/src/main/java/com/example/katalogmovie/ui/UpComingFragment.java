@@ -9,30 +9,32 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
 import com.example.katalogmovie.model.Movie;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.katalogmovie.model.MovieResult;
+import com.example.katalogmovie.network.Api;
+import com.example.katalogmovie.network.NetworkInterface;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -40,11 +42,17 @@ import java.util.ArrayList;
  */
 public class UpComingFragment extends Fragment {
 
+    public static final String TAG = "tag";
+
     RecyclerView rv_movie;
     RequestQueue requestQueue;
     MovieAdapter adapter;
 
-    ArrayList<Movie> movie;
+    List<MovieResult> movieList;
+    MovieAdapter movieAdapter;
+
+    Api movieService;
+    Call<Movie> movieCall;
 
 
     public UpComingFragment() {
@@ -56,7 +64,15 @@ public class UpComingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_up_coming, container, false);
+        View view;
+        View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
+        rv_movie = rootView.findViewById(R.id.rv_Movie);
+
+        initView();
+
+        loadData();
+
+        return rootView;
     }
 
     @Override
@@ -107,75 +123,63 @@ public class UpComingFragment extends Fragment {
                 return false;
             }
         });
-
-        rv_movie = view.findViewById(R.id.rv_Movie);
-        rv_movie.setHasFixedSize(true);
-        rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        movie = new ArrayList<>();
-
-        requestQueue = Volley.newRequestQueue(getActivity());
-
-        loadData();
     }
 
-    private void loadData() {
-        String key_api = "56c57613f92ff6ae9064bc04ced5da14";
-        String url = "https://api.themoviedb.org/3/movie/upcoming?api_key="+ key_api +"&language=en-US";
+    void loadData(){
+        movieService = NetworkInterface.getClient().create(Api.class);
+        movieCall = movieService.getUpcoming(Api.key_api);
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray result = response.getJSONArray("results");
+        movieList = new ArrayList<>();
 
-                            for (int i = 0; i < result.length(); i++){
-                                JSONObject movieItem = result.getJSONObject(i);
-
-                                String id = movieItem.getString("id");
-                                String judul = movieItem.getString("title");
-                                String rilis = movieItem.getString("release_date");
-                                String deskripsi = movieItem.getString("overview");
-                                String image = movieItem.getString("poster_path");
-                                String rating = movieItem.getString("vote_average");
-                                String vote = movieItem.getString("vote_count");
-
-                                movie.add(new Movie(id, judul, rilis, deskripsi, image, rating, vote));
-                            }
-
-                            adapter = new MovieAdapter(getActivity(), movie);
-                            rv_movie.setAdapter(adapter);
-                            ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                                @Override
-                                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                                    showSelectedMovie(movie.get(position));
-                                }
-                            });
-
-                        }catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        movieCall.enqueue(new Callback<Movie>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+            public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
+                if (response.body() != null) {
+                    movieList = Objects.requireNonNull(response.body()).getResults();
+                }
+                movieAdapter.setMovieResultList(movieList);
+                rv_movie.setAdapter(movieAdapter);
+                ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        showSelectedMovie(movieList.get(position));
+                    }
+                });
+                for (MovieResult i : movieList){
+                    Log.d(TAG, "onResponse: " + i.getmPosterPath());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
+                Toast.makeText(getActivity(), "Something went wrong"
+                        , Toast.LENGTH_SHORT).show();
             }
         });
-
-        requestQueue.add(request);
     }
 
-    private void showSelectedMovie(Movie movie){
+    void initView() {
+
+        movieAdapter = new MovieAdapter(getActivity());
+        rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rv_movie.setHasFixedSize(true);
+        rv_movie.setItemAnimator(new DefaultItemAnimator());
+    }
+
+
+    private void showSelectedMovie(MovieResult movie){
+
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(DetailActivity.EXTRA_KEY, movie.getKey());
-        intent.putExtra(DetailActivity.EXTRA_JUDUL, movie.getJudul());
-        intent.putExtra(DetailActivity.EXTRA_RILIS, movie.getRilis());
-        intent.putExtra(DetailActivity.EXTRA_DESKRIPSI, movie.getDeskripsi());
-        intent.putExtra(DetailActivity.EXTRA_IMAGE, movie.getImage());
-        intent.putExtra(DetailActivity.EXTRA_RATING, movie.getRating());
-        intent.putExtra(DetailActivity.EXTRA_VOTE, movie.getVote());
+        intent.putExtra(DetailActivity.EXTRA_KEY, movie.getmId());
+        intent.putExtra(DetailActivity.EXTRA_JUDUL, movie.getmTitle());
+        intent.putExtra(DetailActivity.EXTRA_RILIS, movie.getmReleaseDate());
+        intent.putExtra(DetailActivity.EXTRA_DESKRIPSI, movie.getmOverview());
+        intent.putExtra(DetailActivity.EXTRA_IMAGE, movie.getmPosterPath());
+        intent.putExtra(DetailActivity.EXTRA_RATING, movie.getmVoteAverage());
+        intent.putExtra(DetailActivity.EXTRA_VOTE, movie.getmVoteCount());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());
         startActivity(intent);
     }
 
