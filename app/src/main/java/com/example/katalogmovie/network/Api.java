@@ -22,5 +22,5 @@ public interface Api {
     Call<MovieResult> getMovieById(@Path("id") String id, @Query("api_key") String apiKey);
 
     @GET("search/movie/")
-    Call<Movie> getSearch(@Query("query") String q, @Query("api_key") String apiKey);
+    Call<Movie> getSearch(@Query("api_key") String api_key, @Query("query") String search);
 }

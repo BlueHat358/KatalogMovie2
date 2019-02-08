@@ -45,8 +45,6 @@ public class UpComingFragment extends Fragment {
     public static final String TAG = "tag";
 
     RecyclerView rv_movie;
-    RequestQueue requestQueue;
-    MovieAdapter adapter;
 
     List<MovieResult> movieList;
     MovieAdapter movieAdapter;
@@ -64,7 +62,6 @@ public class UpComingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view;
         View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
 
