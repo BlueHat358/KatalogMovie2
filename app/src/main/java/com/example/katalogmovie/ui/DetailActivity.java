@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Movie;
@@ -35,14 +36,14 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_RATING = "rating";
     public static final String EXTRA_VOTE = "vote";
 
+    public static final String MOVIE_DETAIL = "detail";
+
     public static final String TAG = "tag";
 
     TextView titles, release, overview, rate, vote;
-    ImageView image;
+    ImageView images;
     FloatingActionButton floatingActionButton;
     Button btn_favorite;
-
-    String id, title;
 
     MovieResult results;
 
@@ -51,23 +52,32 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        String key = getIntent().getStringExtra(EXTRA_KEY);
-        final String judul1 = getIntent().getStringExtra(EXTRA_JUDUL);
-        String judul = getIntent().getStringExtra(EXTRA_JUDUL);
-        String rilis = getIntent().getStringExtra(EXTRA_RILIS);
-        String deskripsi = getIntent().getStringExtra(EXTRA_DESKRIPSI);
-        String image = getIntent().getStringExtra(EXTRA_IMAGE);
-        String rating = getIntent().getStringExtra(EXTRA_RATING);
-        String vote = getIntent().getStringExtra(EXTRA_VOTE);
-
         titles = findViewById(R.id.tv_judul_detail);
         release = findViewById(R.id.tv_rilis_detail);
         overview = findViewById(R.id.tv_deskripsi_detail);
         rate = findViewById(R.id.tv_rating_detail);
         this.vote = findViewById(R.id.tv_vote_detail);
-        this.image = findViewById(R.id.img_image_detail);
-        floatingActionButton = findViewById(R.id.fab);
+        images = findViewById(R.id.img_image_detail);
         btn_favorite = findViewById(R.id.btn_favorite);
+
+        results = getIntent().getParcelableExtra(MOVIE_DETAIL);
+
+        btn_favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: " + results.getmVoteAverage());
+                Log.d(TAG, "onClick: " + results.getmTitle());
+            }
+        });
+        getData(results);
+    }
+
+    private void getData(MovieResult results) {
+        String judul = results.getmTitle();
+        String rilis = results.getmReleaseDate();
+        String deskripsi = results.getmOverview();
+        String rating = results.getmVoteAverage().toString();
+        String vote = results.getmVoteCount();
 
         titles.setText(judul);
         release.setText(rilis);
@@ -75,15 +85,9 @@ public class DetailActivity extends AppCompatActivity {
         rate.setText(rating);
         this.vote.setText(vote);
 
-        Picasso.with(this).load("https://image.tmdb.org/t/p/w500/" + image).into(this.image);
-
-        btn_favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + results.getmVoteAverage());
-            }
-        });
+        Glide.with(this).load("https://image.tmdb.org/t/p/w500/" + results.getmPosterPath()).into(images);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_change_settings){

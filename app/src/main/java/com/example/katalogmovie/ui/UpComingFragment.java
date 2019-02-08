@@ -36,6 +36,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.katalogmovie.ui.DetailActivity.MOVIE_DETAIL;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -136,21 +138,19 @@ public class UpComingFragment extends Fragment {
                 }
                 movieAdapter.setMovieResultList(movieList);
                 rv_movie.setAdapter(movieAdapter);
+                Log.d(TAG, "onResponse: " + movieList.size());
+
                 ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         showSelectedMovie(movieList.get(position));
                     }
                 });
-                for (MovieResult i : movieList){
-                    Log.d(TAG, "onResponse: " + i.getmPosterPath());
-                }
             }
 
             @Override
             public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity(), "Something went wrong"
-                        , Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -163,21 +163,13 @@ public class UpComingFragment extends Fragment {
         rv_movie.setItemAnimator(new DefaultItemAnimator());
     }
 
-
     private void showSelectedMovie(MovieResult movie){
 
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(DetailActivity.EXTRA_KEY, movie.getmId());
-        intent.putExtra(DetailActivity.EXTRA_JUDUL, movie.getmTitle());
-        intent.putExtra(DetailActivity.EXTRA_RILIS, movie.getmReleaseDate());
-        intent.putExtra(DetailActivity.EXTRA_DESKRIPSI, movie.getmOverview());
-        intent.putExtra(DetailActivity.EXTRA_IMAGE, movie.getmPosterPath());
-        intent.putExtra(DetailActivity.EXTRA_RATING, movie.getmVoteAverage());
-        intent.putExtra(DetailActivity.EXTRA_VOTE, movie.getmVoteCount());
+        intent.putExtra(MOVIE_DETAIL, movie);
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());
         startActivity(intent);
     }
-
 }

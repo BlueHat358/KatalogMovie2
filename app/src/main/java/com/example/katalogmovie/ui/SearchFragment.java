@@ -2,6 +2,7 @@ package com.example.katalogmovie.ui;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -43,6 +45,8 @@ import retrofit2.Response;
 public class SearchFragment extends Fragment {
 
     public static final String TAG = "tag";
+    public static final String INTENT_SEARCH = "search";
+    public static final String INTENT_TAG = "intent_tag";
 
     RecyclerView rv_movie;
     EditText edtSearch;
@@ -64,23 +68,27 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
         edtSearch = rootView.findViewById(R.id.edt_search);
         btnSearch = rootView.findViewById(R.id.btn_search);
 
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = edtSearch.getText().toString();
-                initView();
+        btnSearch.setOnClickListener(search);
 
-                loadData(id);
-            }
-        });
-
+        initView();
         return rootView;
     }
+
+    View.OnClickListener search = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String id = edtSearch.getText().toString();
+
+            loadData(id);
+
+            Log.d(TAG, "onClick: " + id);
+        }
+    };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -94,7 +102,14 @@ public class SearchFragment extends Fragment {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
+                        FragmentManager fragmentManager = getFragmentManager();
+                        if (fragmentManager != null){
+                            UpComingFragment upComingFragment = new UpComingFragment();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+                            fragmentTransaction.replace(R.id.container, upComingFragment, UpComingFragment.class.getSimpleName());
+                            fragmentTransaction.commit();
+                        }
                         break;
                     case R.id.navigation_dashboard:
                         FragmentManager fragmentManager1 = getFragmentManager();
@@ -107,14 +122,6 @@ public class SearchFragment extends Fragment {
                         }
                         break;
                     case R.id.navigation_notifications:
-                        FragmentManager fragmentManager = getFragmentManager();
-                        if (fragmentManager != null){
-                            SearchFragment searchFragment = new SearchFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, searchFragment, SearchFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
                         break;
                     case R.id.navigation_favorite:
                         FragmentManager fragmentManager2 = getFragmentManager();
@@ -152,9 +159,7 @@ public class SearchFragment extends Fragment {
                         showSelectedMovie(movieList.get(position));
                     }
                 });
-                for (MovieResult i : movieList){
-                    Log.d(TAG, "onResponse: " + i.getmPosterPath());
-                }
+                Log.d(TAG, "onResponse: " + movieList.size());
             }
 
             @Override
