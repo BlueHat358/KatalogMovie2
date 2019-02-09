@@ -2,6 +2,7 @@ package com.example.katalogmovie.ui;
 
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
+import com.example.katalogmovie.db.DatabaseContract;
+import com.example.katalogmovie.model.Favorite;
 import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
 import com.example.katalogmovie.network.Api;
@@ -35,7 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.katalogmovie.ui.DetailActivity.MOVIE_DETAIL;
+import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -107,10 +110,30 @@ public class NowPlayingFragment extends Fragment {
                         }
                         break;
                     case R.id.navigation_favorite:
+                        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
+
+                        Cursor cursor = null;
+                        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
+                                null, null, null, null);
+                        Objects.requireNonNull(cursor).moveToFirst();
+                        Favorite favorite;
+                        if (Objects.requireNonNull(cursor).getCount() > 0) {
+                            do {
+                                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
+                                        DatabaseContract.MovieColumns.ID)));
+                                favoriteArrayList.add(favorite);
+                                cursor.moveToNext();
+                            } while (!cursor.isAfterLast());
+                        }
+
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL_FAVORITE, favoriteArrayList);
+
                         FragmentManager fragmentManager2 = getFragmentManager();
                         if (fragmentManager2 != null){
                             FavoriteFragment favoriteFragment = new FavoriteFragment();
                             FragmentTransaction fragmentTransaction = fragmentManager2.beginTransaction();
+                            favoriteFragment.setArguments(bundle);
 
                             fragmentTransaction.replace(R.id.container, favoriteFragment, FavoriteFragment.class.getSimpleName());
                             fragmentTransaction.commit();
@@ -143,7 +166,7 @@ public class NowPlayingFragment extends Fragment {
                     }
                 });
                 for (MovieResult i : movieList){
-                    Log.d(TAG, "onResponse: " + i.getmPosterPath());
+                    Log.d(TAG, "onResponse: " + i.getimage());
                 }
             }
 
@@ -166,10 +189,10 @@ public class NowPlayingFragment extends Fragment {
 
     private void showSelectedMovie(MovieResult movie){
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(MOVIE_DETAIL, movie);
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());
+        intent.putExtra(EXTRA_DETAIL, movie);
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getjudul());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getid());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getrating());
         startActivity(intent);
     }
 

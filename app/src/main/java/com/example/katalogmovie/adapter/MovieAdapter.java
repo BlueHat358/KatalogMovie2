@@ -1,7 +1,6 @@
 package com.example.katalogmovie.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,15 +12,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.katalogmovie.R;
-import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.model.MovieResult;
-import com.example.katalogmovie.ui.DetailActivity;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.katalogmovie.ui.DetailActivity.MOVIE_DETAIL;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
@@ -73,25 +67,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         }
 
         public void bindView(MovieResult movieResult) {
-            judul.setText(movieResult.getmTitle());
-            rilis.setText(movieResult.getmReleaseDate());
-            deskripsi.setText(movieResult.getmOverview());
-            String image = movieResult.getmPosterPath();
+            judul.setText(movieResult.getjudul());
+            rilis.setText(movieResult.getrilis());
+            deskripsi.setText(movieResult.getdeskripsi());
+            String image = movieResult.getimage();
 
-            Log.d(TAG, "bindView: " + movieResult.getmPosterPath());
+            Log.d(TAG, "bindView: " + movieResult.getimage());
 
             Glide.with(context).load("https://image.tmdb.org/t/p/w185/" +image).into(gambar);
         }
-    }
-
-    private void showSelectedMovie(MovieResult movie){
-
-        Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra(MOVIE_DETAIL, movie);
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());
-        context.startActivity(intent);
     }
 
 }

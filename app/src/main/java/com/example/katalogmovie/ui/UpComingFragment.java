@@ -1,7 +1,5 @@
 package com.example.katalogmovie.ui;
 
-
-import android.content.ContentProvider;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,9 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
@@ -40,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.katalogmovie.ui.DetailActivity.MOVIE_DETAIL;
+import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
 
 
 /**
@@ -130,7 +126,7 @@ public class UpComingFragment extends Fragment {
                         }
 
                         Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL, favoriteArrayList);
+                        bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL_FAVORITE, favoriteArrayList);
 
 
                         FragmentManager fragmentManager2 = getFragmentManager();
@@ -188,11 +184,30 @@ public class UpComingFragment extends Fragment {
     }
 
     private void showSelectedMovie(MovieResult movie){
+        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
+
+        Cursor cursor = null;
+        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
+                null, null, null, null);
+        Objects.requireNonNull(cursor).moveToFirst();
+        Favorite favorite;
+        if (Objects.requireNonNull(cursor).getCount() > 0) {
+            do {
+                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
+                        DatabaseContract.MovieColumns.ID)));
+                favoriteArrayList.add(favorite);
+                cursor.moveToNext();
+            } while (!cursor.isAfterLast());
+        }
+
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(MOVIE_DETAIL, movie);
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());
+
+
+        intent.putExtra(EXTRA_DETAIL, movie);
+        //intent.putParcelableArrayListExtra(DETAIL_ARRAY, favoriteArrayList);
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getimage());
+        Log.d(TAG, "showSelectedMovie() returned: " + favoriteArrayList.size());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getrating());
         startActivity(intent);
     }
 }

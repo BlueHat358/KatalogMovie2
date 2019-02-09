@@ -2,9 +2,9 @@ package com.example.katalogmovie.ui;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,21 +14,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.db.DatabaseContract;
-import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
 
     public static final String MOVIE_DETAIL = "detail";
+    public static final String EXTRA_DETAIL = "detail";
 
     public static final String TAG = "tag";
 
@@ -36,9 +32,8 @@ public class DetailActivity extends AppCompatActivity {
     ImageView images;
     Button btn_favorite;
 
-    ToggleButton toggleButton;
-
     MovieResult results;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,40 +52,56 @@ public class DetailActivity extends AppCompatActivity {
 
         getData(results);
 
+        if (isFavorite(results.getid().toString())){
+            btn_favorite.setText("Remove");
+        }
+        else {
+            btn_favorite.setText("Add");
+        }
+
         btn_favorite.setOnClickListener(isPressed);
+        Log.d(TAG, "onCreate: " + results.getid());
+        Log.d(TAG, "onCreate: " + isFavorite("522681"));
     }
 
     View.OnClickListener isPressed = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick: " + results.getmId());
+            Log.d(TAG, "onClick: " + results.getid());
 
+            String id = results.getid().toString();
+
+            boolean favorite = false;
+
+            if (!isFavorite(id)){
+                Log.d(TAG, "add: " + favorite);
                 ContentValues contentValues = new ContentValues();
-                contentValues.put(DatabaseContract.MovieColumns.ID, results.getmId().toString());
-                contentValues.put(DatabaseContract.MovieColumns.JUDUL, results.getmTitle());
+                contentValues.put(DatabaseContract.MovieColumns.ID, id);
+                contentValues.put(DatabaseContract.MovieColumns.JUDUL, results.getjudul());
                 getContentResolver().insert(DatabaseContract.CONTENT_URI, contentValues);
-                Snackbar.make(v, "This movie has been add to your favorite", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Toast.makeText(DetailActivity.this, "Movie has been added", Toast.LENGTH_LONG).show();
+                btn_favorite.setText("Remove");
+            }
+            else {
+                Log.d(TAG, "Erase: " + favorite);
+                Uri uri = DatabaseContract.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(results.getid().toString()).build();
+                Log.v("MovieDetail", "" + uri);
 
-            Log.d(TAG, "onClick: " + DatabaseContract.MovieColumns.JUDUL);
-//
-//                Uri uri = DatabaseContract.CONTENT_URI;
-//                uri = uri.buildUpon().appendPath(results.getmId().toString()).build();
-//                Log.v("MovieDetail", "" + uri);
-//
-//                getContentResolver().delete(uri, null, null);
-//                Log.v("MovieDetail", uri.toString());
-//                Snackbar.make(v, "This movie has been remove from your favorite", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+                getContentResolver().delete(uri, null, null);
+                Log.v("MovieDetail", uri.toString());
+                Toast.makeText(DetailActivity.this, "Movie has been removed", Toast.LENGTH_LONG).show();
+                btn_favorite.setText("Add");
+            }
         }
     };
 
     private void getData(MovieResult results) {
-        String judul = results.getmTitle();
-        String rilis = results.getmReleaseDate();
-        String deskripsi = results.getmOverview();
-        String rating = results.getmVoteAverage().toString();
-        String vote = results.getmVoteCount();
+        String judul = results.getjudul();
+        String rilis = results.getrilis();
+        String deskripsi = results.getdeskripsi();
+        String rating = results.getrating().toString();
+        String vote = results.getvote();
 
         titles.setText(judul);
         release.setText(rilis);
@@ -98,9 +109,8 @@ public class DetailActivity extends AppCompatActivity {
         rate.setText(rating);
         this.vote.setText(vote);
 
-        //Picasso.get().load("https://image.tmdb.org/t/p/w700/" + results.getmPosterPath()).into(images);
 
-        Glide.with(this).load("https://image.tmdb.org/t/p/w342/" + results.getmPosterPath())
+        Glide.with(this).load("https://image.tmdb.org/t/p/w342/" + results.getimage())
                 .apply(new RequestOptions().fitCenter())
                 .into(images);
     }
@@ -113,4 +123,25 @@ public class DetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private boolean isFavorite(String id) {
+        String selection = " id = ?";
+        String[] selectionArgs = {id};
+        String[] projection = {DatabaseContract.MovieColumns.ID};
+        Uri uri = DatabaseContract.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(id).build();
+
+        Cursor cursor = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            cursor = getContentResolver().query(uri, projection,
+                    selection, selectionArgs, null, null);
+        }
+
+        assert cursor != null;
+        boolean exists = (cursor.getCount() > 0);
+        Log.d(TAG, "isFavorite() returned: " + cursor.getCount());
+        cursor.close();
+        return exists;
+    }
+
 }

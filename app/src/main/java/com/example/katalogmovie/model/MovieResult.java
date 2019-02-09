@@ -9,85 +9,85 @@ import java.util.List;
 
 public class MovieResult implements Parcelable {
     @SerializedName("id")
-    private Long mId;
+    private Long id;
     @SerializedName("overview")
-    private String mOverview;
+    private String deskripsi;
     @SerializedName("poster_path")
-    private String mPosterPath;
+    private String image;
     @SerializedName("release_date")
-    private String mReleaseDate;
+    private String rilis;
     @SerializedName("title")
-    private String mTitle;
+    private String judul;
     @SerializedName("vote_average")
-    private Double mVoteAverage;
+    private Double rating;
     @SerializedName("vote_count")
-    private String mVoteCount;
+    private String vote;
 
-    public Long getmId() {
-        return mId;
+    public Long getid() {
+        return id;
     }
 
-    public void setmId(Long mId) {
-        this.mId = mId;
+    public void setid(Long id) {
+        this.id = id;
     }
 
-    public String getmOverview() {
-        return mOverview;
+    public String getdeskripsi() {
+        return deskripsi;
     }
 
-    public void setmOverview(String mOverview) {
-        this.mOverview = mOverview;
+    public void setdeskripsi(String deskripsi) {
+        this.deskripsi = deskripsi;
     }
 
-    public String getmPosterPath() {
-        return mPosterPath;
+    public String getimage() {
+        return image;
     }
 
-    public void setmPosterPath(String mPosterPath) {
-        this.mPosterPath = mPosterPath;
+    public void setimage(String image) {
+        this.image = image;
     }
 
-    public String getmReleaseDate() {
-        return mReleaseDate;
+    public String getrilis() {
+        return rilis;
     }
 
-    public void setmReleaseDate(String mReleaseDate) {
-        this.mReleaseDate = mReleaseDate;
+    public void setrilis(String rilis) {
+        this.rilis = rilis;
     }
 
-    public String getmTitle() {
-        return mTitle;
+    public String getjudul() {
+        return judul;
     }
 
-    public void setmTitle(String mTitle) {
-        this.mTitle = mTitle;
+    public void setjudul(String judul) {
+        this.judul = judul;
     }
 
-    public Double getmVoteAverage() {
-        return mVoteAverage;
+    public Double getrating() {
+        return rating;
     }
 
-    public void setmVoteAverage(Double mVoteAverage) {
-        this.mVoteAverage = mVoteAverage;
+    public void setrating(Double rating) {
+        this.rating = rating;
     }
 
-    public String getmVoteCount() {
-        return mVoteCount;
+    public String getvote() {
+        return vote;
     }
 
-    public void setmVoteCount(String mVoteCount) {
-        this.mVoteCount = mVoteCount;
+    public void setvote(String vote) {
+        this.vote = vote;
     }
 
-    public MovieResult(Long mId, String mOverview, String mPosterPath,
-                       String mReleaseDate, String mTitle, Double mVoteAverage, String mVoteCount) {
-        this.mId = mId;
-        this.mOverview = mOverview;
-        this.mPosterPath = mPosterPath;
-        this.mReleaseDate = mReleaseDate;
-        this.mTitle = mTitle;
-        this.mVoteAverage = mVoteAverage;
-        this.mVoteCount = mVoteCount;
+    public MovieResult(Long id, String deskripsi, String image,
+                       String rilis, String judul, Double rating, String vote) {
+        this.id = id;
+        this.deskripsi = deskripsi;
+        this.image = image;
+        this.rilis = rilis;
+        this.judul = judul;
+        this.rating = rating;
+        this.vote = vote;
     }
 
     @Override
@@ -97,25 +97,25 @@ public class MovieResult implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(this.mId);
-        dest.writeString(this.mOverview);
-        dest.writeString(this.mPosterPath);
-        dest.writeString(this.mReleaseDate);
-        dest.writeString(this.mTitle);
-        dest.writeValue(this.mVoteAverage);
-        dest.writeString(this.mVoteCount);
+        dest.writeValue(this.id);
+        dest.writeString(this.deskripsi);
+        dest.writeString(this.image);
+        dest.writeString(this.rilis);
+        dest.writeString(this.judul);
+        dest.writeValue(this.rating);
+        dest.writeString(this.vote);
     }
 
     public MovieResult(){}
 
     protected MovieResult(Parcel in) {
-        this.mId = (Long) in.readValue(Long.class.getClassLoader());
-        this.mOverview = in.readString();
-        this.mPosterPath = in.readString();
-        this.mReleaseDate = in.readString();
-        this.mTitle = in.readString();
-        this.mVoteAverage = (Double) in.readValue(Double.class.getClassLoader());
-        this.mVoteCount = in.readString();
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.deskripsi = in.readString();
+        this.image = in.readString();
+        this.rilis = in.readString();
+        this.judul = in.readString();
+        this.rating = (Double) in.readValue(Double.class.getClassLoader());
+        this.vote = in.readString();
     }
 
     public static final Parcelable.Creator<MovieResult> CREATOR = new Parcelable.Creator<MovieResult>() {

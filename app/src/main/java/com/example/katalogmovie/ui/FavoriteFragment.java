@@ -2,7 +2,6 @@ package com.example.katalogmovie.ui;
 
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,7 +9,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.katalogmovie.R;
+import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
 import com.example.katalogmovie.model.Favorite;
 import com.example.katalogmovie.model.Movie;
@@ -35,14 +34,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.katalogmovie.ui.DetailActivity.MOVIE_DETAIL;
+import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FavoriteFragment extends Fragment {
 
-    public static final String EXTRA_DETAIL = "detail";
+    public static final String EXTRA_DETAIL_FAVORITE = "detail";
 
     public static final String TAG = "tag";
 
@@ -52,7 +52,6 @@ public class FavoriteFragment extends Fragment {
     MovieAdapter movieAdapter;
 
     Api api;
-    Call<Movie> movieCall;
     Call<MovieResult> resultCall;
     MovieResult movieResult;
 
@@ -74,7 +73,7 @@ public class FavoriteFragment extends Fragment {
         rv_movie = rootView.findViewById(R.id.rv_Movie);
 
         assert getArguments() != null;
-        ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL);
+        ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
 
         Log.d(TAG, "onCreateView: " + favorites.size());
 
@@ -145,6 +144,15 @@ public class FavoriteFragment extends Fragment {
                 movieList.add(response.body());
                 movieAdapter.setMovieResultList(movieList);
                 rv_movie.setAdapter(movieAdapter);
+                ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        showSelectedMovie(movieList.get(position));
+                    }
+                });
+                for (MovieResult i : movieList){
+                    Log.d(TAG, "onResponse: " + i.getimage());
+                }
             }
 
             @Override
@@ -165,10 +173,10 @@ public class FavoriteFragment extends Fragment {
 
     private void showSelectedMovie(MovieResult movie){
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(MOVIE_DETAIL, movie);
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
-        Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());
+        intent.putExtra(EXTRA_DETAIL, movie);
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getimage());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getid());
+        Log.d(TAG, "showSelectedMovie() returned: " + movie.getjudul());
         startActivity(intent);
     }
 

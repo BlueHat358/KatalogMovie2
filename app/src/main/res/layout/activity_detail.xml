@@ -18,19 +18,7 @@
             android:id="@+id/img_image_detail"
             android:layout_centerHorizontal="true"
             />
-        <!--<ToggleButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="@string/favorite"-->
-            <!--android:id="@+id/btn_toggle_favorite"-->
-            <!--android:textSize="11sp"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:background="#00E02626"-->
-            <!--android:layout_alignParentEnd="true"-->
-            <!--android:layout_below="@+id/img_image_detail"-->
-            <!--/>-->
-
-        <Button
+        <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/favorite"
@@ -41,6 +29,18 @@
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/img_image_detail"
             />
+
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/favorite"-->
+            <!--android:id="@+id/btn_toggle_favorite"-->
+            <!--android:textSize="11sp"-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:background="#00E02626"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_below="@+id/img_image_detail"-->
+            <!--/>-->
 
         <TextView
             android:layout_width="match_parent"
