@@ -39,6 +39,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.katalogmovie.ui.DetailActivity.MOVIE_DETAIL;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -180,15 +182,8 @@ public class SearchFragment extends Fragment {
 
 
     private void showSelectedMovie(MovieResult movie){
-
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(DetailActivity.EXTRA_KEY, movie.getmId());
-        intent.putExtra(DetailActivity.EXTRA_JUDUL, movie.getmTitle());
-        intent.putExtra(DetailActivity.EXTRA_RILIS, movie.getmReleaseDate());
-        intent.putExtra(DetailActivity.EXTRA_DESKRIPSI, movie.getmOverview());
-        intent.putExtra(DetailActivity.EXTRA_IMAGE, movie.getmPosterPath());
-        intent.putExtra(DetailActivity.EXTRA_RATING, movie.getmVoteAverage());
-        intent.putExtra(DetailActivity.EXTRA_VOTE, movie.getmVoteCount());
+        intent.putExtra(MOVIE_DETAIL, movie);
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmId());
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmVoteAverage());

@@ -4,6 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <permission android:name="ccom.example.katalogmovie.READ_DATABASE"
+        android:protectionLevel="normal"/>
+
+    <permission android:name="com.example.katalogmovie.WRITE_DATABASE"
+        android:protectionLevel="normal"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +27,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="com.example.katalogmovie"
+            android:name=".provider.MovieProvider"
+            android:exported="true"
+            android:readPermission="com.example.katalogmovie.READ_DATABASE"
+            android:writePermission="com.example.katalogmovie.WRITE_DATABASE"/>
     </application>
 
 </manifest>

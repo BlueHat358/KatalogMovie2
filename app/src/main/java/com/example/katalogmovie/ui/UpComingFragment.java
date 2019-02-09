@@ -156,7 +156,6 @@ public class UpComingFragment extends Fragment {
     }
 
     void initView() {
-
         movieAdapter = new MovieAdapter(getActivity());
         rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_movie.setHasFixedSize(true);
@@ -164,7 +163,6 @@ public class UpComingFragment extends Fragment {
     }
 
     private void showSelectedMovie(MovieResult movie){
-
         Intent intent = new Intent(getActivity(), DetailActivity.class);
         intent.putExtra(MOVIE_DETAIL, movie);
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getmPosterPath());

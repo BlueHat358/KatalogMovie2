@@ -2,8 +2,6 @@ package com.example.katalogmovie.ui;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Movie;
@@ -28,22 +27,14 @@ import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_KEY = "key";
-    public static final String EXTRA_JUDUL= "judul";
-    public static final String EXTRA_RILIS= "rilis";
-    public static final String EXTRA_DESKRIPSI = "deskripsi";
-    public static final String EXTRA_IMAGE = "image";
-    public static final String EXTRA_RATING = "rating";
-    public static final String EXTRA_VOTE = "vote";
-
     public static final String MOVIE_DETAIL = "detail";
 
     public static final String TAG = "tag";
 
     TextView titles, release, overview, rate, vote;
     ImageView images;
-    FloatingActionButton floatingActionButton;
     Button btn_favorite;
+    FloatingActionButton floatingActionButton;
 
     MovieResult results;
 
@@ -58,19 +49,39 @@ public class DetailActivity extends AppCompatActivity {
         rate = findViewById(R.id.tv_rating_detail);
         this.vote = findViewById(R.id.tv_vote_detail);
         images = findViewById(R.id.img_image_detail);
-        btn_favorite = findViewById(R.id.btn_favorite);
+        btn_favorite = findViewById(R.id.btn_toggle_favorite);
 
         results = getIntent().getParcelableExtra(MOVIE_DETAIL);
 
-        btn_favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: " + results.getmVoteAverage());
-                Log.d(TAG, "onClick: " + results.getmTitle());
-            }
-        });
         getData(results);
+
+        btn_favorite.setOnClickListener(isPressed);
     }
+
+    View.OnClickListener isPressed = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "onClick: " + results.getmId());
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DatabaseContract.MovieColumns.ID, results.getmId().toString());
+                contentValues.put(DatabaseContract.MovieColumns.JUDUL, results.getmTitle());
+                getContentResolver().insert(DatabaseContract.CONTENT_URI, contentValues);
+                Snackbar.make(v, "This movie has been add to your favorite", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+            Log.d(TAG, "onClick: " + DatabaseContract.MovieColumns.ID);
+//
+//                Uri uri = DatabaseContract.CONTENT_URI;
+//                uri = uri.buildUpon().appendPath(results.getmId().toString()).build();
+//                Log.v("MovieDetail", "" + uri);
+//
+//                getContentResolver().delete(uri, null, null);
+//                Log.v("MovieDetail", uri.toString());
+//                Snackbar.make(v, "This movie has been remove from your favorite", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+        }
+    };
 
     private void getData(MovieResult results) {
         String judul = results.getmTitle();
@@ -85,7 +96,11 @@ public class DetailActivity extends AppCompatActivity {
         rate.setText(rating);
         this.vote.setText(vote);
 
-        Glide.with(this).load("https://image.tmdb.org/t/p/w500/" + results.getmPosterPath()).into(images);
+        //Picasso.get().load("https://image.tmdb.org/t/p/w700/" + results.getmPosterPath()).into(images);
+
+        Glide.with(this).load("https://image.tmdb.org/t/p/w342/" + results.getmPosterPath())
+                .apply(new RequestOptions().fitCenter())
+                .into(images);
     }
 
     @Override

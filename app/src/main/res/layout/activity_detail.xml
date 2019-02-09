@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,75 +8,90 @@
     android:layout_margin="10dp"
     >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         >
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="350dp"
             android:id="@+id/img_image_detail"
-            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
             />
+        <!--<ToggleButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/favorite"-->
+            <!--android:id="@+id/btn_toggle_favorite"-->
+            <!--android:textSize="11sp"-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:background="#00E02626"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_below="@+id/img_image_detail"-->
+            <!--/>-->
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/favorite"
-            android:id="@+id/btn_favorite"
+            android:id="@+id/btn_toggle_favorite"
             android:textSize="11sp"
             android:layout_margin="10dp"
             android:background="#00E02626"
-            android:layout_gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/img_image_detail"
             />
+
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tv_judul_detail"
             android:layout_marginTop="13dp"
             android:textStyle="bold"
-            android:layout_gravity="center"
             android:textSize="23sp"
+            android:textAlignment="center"
+            android:layout_below="@+id/btn_toggle_favorite"
             />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
             <TextView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:textSize="50sp"
-                android:textAlignment="center"
-                android:textStyle="bold"
                 android:id="@+id/tv_rating_detail"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                />
-            <TextView
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:textSize="50sp"
+                android:layout_below="@+id/tv_judul_detail"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginBottom="10dp"
                 android:textAlignment="center"
+                android:textSize="50sp"
                 android:textStyle="bold"
+                android:layout_alignParentLeft="true"
+                />
+
+            <TextView
                 android:id="@+id/tv_vote_detail"
-                android:layout_marginRight="10dp"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:layout_below="@id/tv_judul_detail"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="25dp"
                 />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
             <TextView
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:id="@+id/rating"
                 android:text="@string/rating"
                 android:textAlignment="center"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="25dp"
                 android:layout_marginRight="10dp"
+                android:layout_below="@+id/tv_rating_detail"
                 />
             <TextView
                 android:layout_width="150dp"
@@ -85,40 +100,50 @@
                 android:text="@string/vote"
                 android:textAlignment="center"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/tv_vote_detail"
                 />
-        </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/release"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="25dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_rilis_detail"
-            android:layout_marginTop="10dp"
-            android:textSize="16sp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/description"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="25dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_deskripsi_detail"
-            android:layout_marginTop="10dp"
-            android:textSize="16sp"
-            />
-    </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/release"
+                android:id="@+id/release"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="25dp"
+                android:layout_below="@id/rating"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_rilis_detail"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:layout_below="@id/release"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/description"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:id="@+id/deskripsi"
+                android:layout_below="@+id/tv_rilis_detail"
+                android:layout_marginTop="25dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_deskripsi_detail"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:layout_below="@id/deskripsi"
+                />
+    </RelativeLayout>
 
     <!--<android.support.design.widget.AppBarLayout-->
         <!--android:id="@+id/app_bar_layout"-->
@@ -283,4 +308,4 @@
         <!--app:layout_anchor="@id/app_bar_layout"-->
         <!--app:layout_anchorGravity="bottom|end" />-->
 
-</android.support.design.widget.CoordinatorLayout>
+</ScrollView>
