@@ -1,7 +1,9 @@
 package com.example.katalogmovie.ui;
 
 
+import android.content.ContentProvider;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +25,8 @@ import com.android.volley.RequestQueue;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
+import com.example.katalogmovie.db.DatabaseContract;
+import com.example.katalogmovie.model.Favorite;
 import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
 import com.example.katalogmovie.network.Api;
@@ -109,10 +113,31 @@ public class UpComingFragment extends Fragment {
                         }
                         break;
                     case R.id.navigation_favorite:
+                        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
+
+                        Cursor cursor = null;
+                        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
+                                null, null, null, null);
+                        Objects.requireNonNull(cursor).moveToFirst();
+                        Favorite favorite;
+                        if (Objects.requireNonNull(cursor).getCount() > 0) {
+                            do {
+                                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
+                                        DatabaseContract.MovieColumns.ID)));
+                                favoriteArrayList.add(favorite);
+                                cursor.moveToNext();
+                            } while (!cursor.isAfterLast());
+                        }
+
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL, favoriteArrayList);
+
+
                         FragmentManager fragmentManager2 = getFragmentManager();
                         if (fragmentManager2 != null){
                             FavoriteFragment favoriteFragment = new FavoriteFragment();
                             FragmentTransaction fragmentTransaction = fragmentManager2.beginTransaction();
+                            favoriteFragment.setArguments(bundle);
 
                             fragmentTransaction.replace(R.id.container, favoriteFragment, FavoriteFragment.class.getSimpleName());
                             fragmentTransaction.commit();

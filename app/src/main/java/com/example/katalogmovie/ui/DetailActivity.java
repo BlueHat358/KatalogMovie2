@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -34,7 +35,8 @@ public class DetailActivity extends AppCompatActivity {
     TextView titles, release, overview, rate, vote;
     ImageView images;
     Button btn_favorite;
-    FloatingActionButton floatingActionButton;
+
+    ToggleButton toggleButton;
 
     MovieResult results;
 
@@ -70,7 +72,7 @@ public class DetailActivity extends AppCompatActivity {
                 Snackbar.make(v, "This movie has been add to your favorite", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-            Log.d(TAG, "onClick: " + DatabaseContract.MovieColumns.ID);
+            Log.d(TAG, "onClick: " + DatabaseContract.MovieColumns.JUDUL);
 //
 //                Uri uri = DatabaseContract.CONTENT_URI;
 //                uri = uri.buildUpon().appendPath(results.getmId().toString()).build();

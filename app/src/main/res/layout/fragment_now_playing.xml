@@ -14,6 +14,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_Movie"
             android:layout_width="match_parent"
+            android:layout_alignParentTop="true"
             android:layout_height="wrap_content"
             tools:listitem="@layout/movie_model"
             android:layout_above="@+id/navigation"

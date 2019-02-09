@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:id="@+id/img_image"
-        />
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="10dp"
-        >
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/img_image"
+            />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,12 +23,22 @@
             android:textStyle="bold"
             android:textColor="#050505"
             android:id="@+id/tv_judul"
+            android:layout_toEndOf="@+id/img_image"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginBottom="10dp"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:id="@+id/tv_rilis"
+            android:layout_toEndOf="@+id/img_image"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="13dp"
+            android:layout_below="@+id/tv_judul"
+            android:layout_marginBottom="5dp"
             />
         <TextView
             android:layout_width="match_parent"
@@ -37,7 +47,12 @@
             android:layout_marginBottom="10dp"
             android:id="@+id/tv_deskripsi"
             android:maxLines="3"
+            android:layout_toEndOf="@+id/img_image"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="13dp"
+            android:layout_below="@id/tv_rilis"
             />
-    </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

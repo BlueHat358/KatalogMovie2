@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             tools:listitem="@layout/movie_model"
             android:layout_above="@+id/navigation"
-            ></android.support.v7.widget.RecyclerView>
+            android:layout_alignParentTop="true"/>
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/navigation"
