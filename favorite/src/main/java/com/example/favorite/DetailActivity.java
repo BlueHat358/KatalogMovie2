@@ -1,14 +1,11 @@
-package com.example.katalogmovie.ui;
+package com.example.favorite;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,13 +14,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.katalogmovie.R;
-import com.example.katalogmovie.db.DatabaseContract;
-import com.example.katalogmovie.model.MovieResult;
+import com.example.favorite.db.DatabaseContract;
+import com.example.favorite.model.MovieResult;
 
 public class DetailActivity extends AppCompatActivity {
 
-    public static final String MOVIE_DETAIL = "detail";
     public static final String EXTRA_DETAIL = "detail";
 
     public static final String TAG = "tag";
@@ -33,7 +28,6 @@ public class DetailActivity extends AppCompatActivity {
     Button btn_favorite;
 
     MovieResult results;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +42,7 @@ public class DetailActivity extends AppCompatActivity {
         images = findViewById(R.id.img_image_detail);
         btn_favorite = findViewById(R.id.btn_toggle_favorite);
 
-        results = getIntent().getParcelableExtra(MOVIE_DETAIL);
+        results = getIntent().getParcelableExtra(EXTRA_DETAIL);
 
         getData(results);
 
@@ -114,15 +108,6 @@ public class DetailActivity extends AppCompatActivity {
                 .into(images);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_change_settings){
-            Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-            startActivity(mIntent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private boolean isFavorite(String id) {
         String selection = " id = ?";
         String[] selectionArgs = {id};
@@ -132,7 +117,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Cursor cursor = null;
         cursor = getContentResolver().query(uri, projection,
-                    selection, selectionArgs, null, null);
+                selection, selectionArgs, null, null);
 
         assert cursor != null;
         boolean exists = (cursor.getCount() > 0);
@@ -140,5 +125,4 @@ public class DetailActivity extends AppCompatActivity {
         cursor.close();
         return exists;
     }
-
 }

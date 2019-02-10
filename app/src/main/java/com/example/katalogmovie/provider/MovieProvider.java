@@ -20,8 +20,8 @@ import static com.example.katalogmovie.db.DatabaseContract.AUTHORITY;
 import static com.example.katalogmovie.db.DatabaseContract.CONTENT_URI;
 
 public class MovieProvider extends ContentProvider {
-    private static final int MOVIE = 100;
-    private static final int MOVIE_ID = 101;
+    private static final int MOVIE = 1;
+    private static final int MOVIE_ID = 2;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -78,11 +78,10 @@ public class MovieProvider extends ContentProvider {
         return null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        long added ;
+        long added;
 
         switch (sUriMatcher.match(uri)){
             case MOVIE:

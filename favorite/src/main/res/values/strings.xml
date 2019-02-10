@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Favorite</string>
+    <string name="upcoming">Akan Tayang</string>
+    <string name="now_playing">Sedang Tayang</string>
+    <string name="search">Cari</string>
+    <string name="release">Tanggal Rilis:</string>
+    <string name="description">Deskripsi:</string>
+    <string name="rating">Peringkat</string>
+    <string name="vote">Jumlah Pilih</string>
+    <string name="change_language_settings">Ubah Pengaturan Bahasa</string>
+    <string name="favorite">Favorit</string>
+</resources>
