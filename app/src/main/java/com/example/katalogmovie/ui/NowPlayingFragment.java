@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.katalogmovie.R;
@@ -61,6 +62,8 @@ public class NowPlayingFragment extends Fragment {
     Api movieService;
     Call<Movie> movieCall;
 
+    ProgressBar loading;
+
 
     public NowPlayingFragment() {
         // Required empty public constructor
@@ -73,6 +76,7 @@ public class NowPlayingFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
+        loading = rootView.findViewById(R.id.progress_circular);
 
         return rootView;
     }
@@ -184,6 +188,7 @@ public class NowPlayingFragment extends Fragment {
                 for (MovieResult i : movieList){
                     Log.d(TAG, "onResponse: " + i.getimage());
                 }
+                loading.setVisibility(View.GONE);
             }
 
             @Override

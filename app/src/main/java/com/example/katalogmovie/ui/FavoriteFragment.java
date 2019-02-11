@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.katalogmovie.R;
@@ -61,6 +62,8 @@ public class FavoriteFragment extends Fragment {
     Call<MovieResult> resultCall;
     MovieResult movieResult;
 
+    ProgressBar loading;
+
 
     public FavoriteFragment() {
         // Required empty public constructor
@@ -77,6 +80,8 @@ public class FavoriteFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
+        loading = rootView.findViewById(R.id.progress_circular);
+        loading.setVisibility(View.INVISIBLE);
 
         return rootView;
     }
@@ -162,6 +167,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void getFavorite(String id) {
+        loading.setVisibility(View.VISIBLE);
         api = NetworkInterface.getClient().create(Api.class);
         resultCall = api.getMovieById(id, Api.key_api);
 
@@ -180,6 +186,7 @@ public class FavoriteFragment extends Fragment {
                 for (MovieResult i : movieList){
                     Log.d(TAG, "onResponse: " + i.getimage());
                 }
+                loading.setVisibility(View.GONE);
             }
 
             @Override

@@ -36,12 +36,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-//        Fragment fragment = fragmentManager.findFragmentByTag(UpComingFragment.class.getSimpleName());
-//        if (!(fragment instanceof UpComingFragment)){
-//            fragmentTransaction.replace(R.id.container, upComingFragment, UpComingFragment.class.getSimpleName());
-//            fragmentTransaction.commit();
-//        }
-
         if (savedInstanceState == null){
             UpComingFragment upComingFragment = new UpComingFragment();
             fragmentTransaction.replace(R.id.container, upComingFragment

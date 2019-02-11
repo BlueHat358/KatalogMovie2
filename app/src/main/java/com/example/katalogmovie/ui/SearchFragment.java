@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.katalogmovie.R;
@@ -64,6 +65,8 @@ public class SearchFragment extends Fragment {
     Api movieService;
     Call<Movie> movieCall;
 
+    ProgressBar loading;
+
 
     public SearchFragment() {
         // Required empty public constructor
@@ -78,9 +81,9 @@ public class SearchFragment extends Fragment {
         rv_movie = rootView.findViewById(R.id.rv_Movie);
         edtSearch = rootView.findViewById(R.id.edt_search);
         btnSearch = rootView.findViewById(R.id.btn_search);
+        loading = rootView.findViewById(R.id.progress_circular);
 
-
-
+        loading.setVisibility(View.INVISIBLE);
         initView();
         return rootView;
     }
@@ -190,6 +193,7 @@ public class SearchFragment extends Fragment {
     }
 
     void loadData(String id){
+        loading.setVisibility(View.VISIBLE);
         movieService = NetworkInterface.getClient().create(Api.class);
         movieCall = movieService.getSearch(id, Api.key_api);
 
@@ -210,6 +214,7 @@ public class SearchFragment extends Fragment {
                     }
                 });
                 Log.d(TAG, "onResponse: " + movieList.size());
+                loading.setVisibility(View.GONE);
             }
 
             @Override
