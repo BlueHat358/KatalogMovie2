@@ -1,9 +1,13 @@
 package com.example.katalogmovie.ui;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -40,6 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.katalogmovie.Support.FragmentHelper.KEY_MOVIES;
 import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
 
 /**
@@ -74,7 +79,7 @@ public class SearchFragment extends Fragment {
         edtSearch = rootView.findViewById(R.id.edt_search);
         btnSearch = rootView.findViewById(R.id.btn_search);
 
-        btnSearch.setOnClickListener(search);
+
 
         initView();
         return rootView;
@@ -83,16 +88,16 @@ public class SearchFragment extends Fragment {
     View.OnClickListener search = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String id = edtSearch.getText().toString();
+//            String id = edtSearch.getText().toString();
+//
+//            loadData(id);
 
-            loadData(id);
-
-            Log.d(TAG, "onClick: " + id);
+//            Log.d(TAG, "onClick: " + id);
         }
     };
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -158,6 +163,30 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (savedInstanceState == null && checkInternet()) {
+                    String id = edtSearch.getText().toString();
+                    initView();
+                    loadData(id);
+                    Log.d(TAG, "onViewCreated: " + id);
+                }
+                else if (savedInstanceState != null && checkInternet()){
+                    //movieList = savedInstanceState.getParcelableArrayList(KEY_MOVIES);
+                    String id = edtSearch.getText().toString();
+                    initView();
+                    loadData(id);
+                    Log.d(TAG, "onViewCreated1: " + id);
+                    //Log.d(TAG, "onViewCreated: " + movieList.size());
+                }
+                else {
+                    Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+                }
+            }
+        });
+
     }
 
     void loadData(String id){
@@ -197,6 +226,30 @@ public class SearchFragment extends Fragment {
         rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_movie.setHasFixedSize(true);
         rv_movie.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public boolean checkInternet(){
+        boolean connectStatus = true;
+        ConnectivityManager ConnectionManager=(ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && (networkInfo).isConnected()==true ) {
+            connectStatus = true;
+            Log.d(TAG, "checkInternet: " + connectStatus);
+        }
+        else {
+            connectStatus = false;
+            Log.d(TAG, "checkInternet: " + connectStatus);
+        }
+        return connectStatus;
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (checkInternet()) {
+            outState.putParcelableArrayList(KEY_MOVIES, (ArrayList<? extends Parcelable>) movieAdapter.getMovieResultList());
+            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
+            outState.putInt(KEY_MOVIES,2);
+            super.onSaveInstanceState(outState);
+        }
     }
 
 

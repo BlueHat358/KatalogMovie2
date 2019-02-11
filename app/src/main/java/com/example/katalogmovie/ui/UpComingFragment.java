@@ -1,8 +1,12 @@
 package com.example.katalogmovie.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -17,12 +21,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.katalogmovie.MainActivity;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Favorite;
+import com.example.katalogmovie.model.FragmentHelper;
 import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
 import com.example.katalogmovie.network.Api;
@@ -36,6 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.katalogmovie.Support.FragmentHelper.KEY_MOVIES;
 import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
 
 
@@ -67,9 +75,9 @@ public class UpComingFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
 
-        initView();
-
-        loadData();
+//        initView();
+//
+//        loadData();
 
         return rootView;
     }
@@ -143,6 +151,23 @@ public class UpComingFragment extends Fragment {
                 return false;
             }
         });
+
+        if (savedInstanceState == null && checkInternet()) {
+            initView();
+            loadData();
+        }
+        else if (savedInstanceState != null && checkInternet()){
+            movieList = savedInstanceState.getParcelableArrayList(KEY_MOVIES);
+            initView();
+            loadData();
+            Log.d(TAG, "onViewCreated: " + movieList.size());
+        }
+        else {
+            Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+        }
+
+        FragmentHelper position = new FragmentHelper();
+        position.setPosition(0);
     }
 
     void loadData(){
@@ -174,6 +199,30 @@ public class UpComingFragment extends Fragment {
 
             }
         });
+    }
+
+    public boolean checkInternet(){
+        boolean connectStatus = true;
+        ConnectivityManager ConnectionManager=(ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && (networkInfo).isConnected()==true ) {
+            connectStatus = true;
+            Log.d(TAG, "checkInternet: " + connectStatus);
+        }
+        else {
+            connectStatus = false;
+            Log.d(TAG, "checkInternet: " + connectStatus);
+        }
+        return connectStatus;
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (checkInternet()) {
+            outState.putParcelableArrayList(KEY_MOVIES, (ArrayList<? extends Parcelable>) movieAdapter.getMovieResultList());
+            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
+            outState.putInt(KEY_MOVIES,0);
+            super.onSaveInstanceState(outState);
+        }
     }
 
     void initView() {

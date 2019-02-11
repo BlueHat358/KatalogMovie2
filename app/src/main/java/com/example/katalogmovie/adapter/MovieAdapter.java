@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.katalogmovie.R;
+import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     public void setMovieResultList(List<MovieResult> movieResultList) {
         this.movieResultList = movieResultList;
+    }
+    public List<MovieResult> getMovieResultList() {
+        return movieResultList;
     }
 
     public MovieAdapter(Context context) {

@@ -1,8 +1,12 @@
 package com.example.katalogmovie.ui;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -17,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
@@ -34,6 +39,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.katalogmovie.Support.FragmentHelper.KEY_MOVIES;
 import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
 
 
@@ -72,16 +78,6 @@ public class FavoriteFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
 
-        assert getArguments() != null;
-        ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
-
-        Log.d(TAG, "onCreateView: " + favorites.size());
-
-        for (Favorite i : favorites){
-            Log.d(TAG, "onCreateView: " + i.getId());
-            initView();
-            getFavorite(i.getId());
-        }
         return rootView;
     }
 
@@ -132,6 +128,37 @@ public class FavoriteFragment extends Fragment {
                 return false;
             }
         });
+
+        if (savedInstanceState == null && checkInternet()) {
+            ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
+            if (favorites.size() == 0) {
+                Toast.makeText(getActivity(), "No favorite has been added", 10).show();
+            }
+            else {
+
+                Log.d(TAG, "onCreateView: " + favorites.size());
+
+                for (Favorite i : favorites) {
+                    Log.d(TAG, "onCreateView: " + i.getId());
+                    initView();
+                    getFavorite(i.getId());
+                }
+            }
+        }
+        else if (savedInstanceState != null && checkInternet()){
+            ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
+            initView();
+            Log.d(TAG, "onCreateView: " + favorites.size());
+
+            for (Favorite i : favorites) {
+                Log.d(TAG, "onCreateView: " + i.getId());
+                initView();
+                getFavorite(i.getId());
+            }
+        }
+        else {
+            Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+        }
     }
 
     private void getFavorite(String id) {
@@ -168,6 +195,29 @@ public class FavoriteFragment extends Fragment {
         rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_movie.setHasFixedSize(true);
         rv_movie.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public boolean checkInternet(){
+        boolean connectStatus = true;
+        ConnectivityManager ConnectionManager=(ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && (networkInfo).isConnected()==true ) {
+            connectStatus = true;
+            Log.d(TAG, "checkInternet: " + connectStatus);
+        }
+        else {
+            connectStatus = false;
+            Log.d(TAG, "checkInternet: " + connectStatus);
+        }
+        return connectStatus;
+    }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (checkInternet()) {
+            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
+            outState.putInt(KEY_MOVIES,3);
+            super.onSaveInstanceState(outState);
+        }
     }
 
 
