@@ -108,7 +108,7 @@ public class MovieResult implements Parcelable {
 
     public MovieResult(){}
 
-    protected MovieResult(Parcel in) {
+    public MovieResult(Parcel in) {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.deskripsi = in.readString();
         this.image = in.readString();

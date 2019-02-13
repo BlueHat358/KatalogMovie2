@@ -1,7 +1,11 @@
 package com.example.katalogmovie.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import static com.example.katalogmovie.db.DatabaseContract.MovieColumns.ID;
+import static com.example.katalogmovie.db.DatabaseContract.MovieColumns.JUDUL;
 
 public class Favorite implements Parcelable {
     public String id, judul;
@@ -33,8 +37,14 @@ public class Favorite implements Parcelable {
         dest.writeString(this.judul);
     }
 
-    public Favorite(String id) {
+    public Favorite(String id, String judul) {
         this.id = id;
+        this.judul = judul;
+    }
+
+    public Favorite(Cursor cursor) {
+        this.id = cursor.getString(cursor.getColumnIndexOrThrow(ID));
+        this.judul = cursor.getString(cursor.getColumnIndexOrThrow(JUDUL));
     }
 
     public Favorite() {

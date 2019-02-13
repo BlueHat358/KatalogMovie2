@@ -98,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
                     if (Objects.requireNonNull(cursor).getCount() > 0) {
                         do {
                             favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
-                                    DatabaseContract.MovieColumns.ID)));
+                                            DatabaseContract.MovieColumns.ID)),
+                                    cursor.getString(cursor.getColumnIndexOrThrow(
+                                            DatabaseContract.MovieColumns.JUDUL)));
                             favoriteArrayList.add(favorite);
                             cursor.moveToNext();
                         } while (!cursor.isAfterLast());

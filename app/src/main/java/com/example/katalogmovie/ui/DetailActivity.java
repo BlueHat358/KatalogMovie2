@@ -79,7 +79,8 @@ public class DetailActivity extends AppCompatActivity {
                 Log.d(TAG, "add: " + favorite);
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(DatabaseContract.MovieColumns.ID, id);
-                contentValues.put(DatabaseContract.MovieColumns.JUDUL, results.getjudul());
+                contentValues.put(DatabaseContract.MovieColumns.JUDUL, results.getimage());
+                Log.d(TAG, "onClick: " + results.getimage());
                 getContentResolver().insert(DatabaseContract.CONTENT_URI, contentValues);
                 Toast.makeText(DetailActivity.this, "Movie has been added", Toast.LENGTH_LONG).show();
                 btn_favorite.setText("Remove");

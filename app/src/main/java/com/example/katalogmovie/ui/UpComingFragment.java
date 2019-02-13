@@ -160,29 +160,10 @@ public class UpComingFragment extends Fragment {
     }
 
     private void showSelectedMovie(MovieResult movie){
-        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
-
-        Cursor cursor = null;
-        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
-                null, null, null, null);
-        Objects.requireNonNull(cursor).moveToFirst();
-        Favorite favorite;
-        if (Objects.requireNonNull(cursor).getCount() > 0) {
-            do {
-                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
-                        DatabaseContract.MovieColumns.ID)));
-                favoriteArrayList.add(favorite);
-                cursor.moveToNext();
-            } while (!cursor.isAfterLast());
-        }
-
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-
-
         intent.putExtra(EXTRA_DETAIL, movie);
         //intent.putParcelableArrayListExtra(DETAIL_ARRAY, favoriteArrayList);
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getimage());
-        Log.d(TAG, "showSelectedMovie() returned: " + favoriteArrayList.size());
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getrating());
         startActivity(intent);
     }
