@@ -75,7 +75,7 @@ public class SearchFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
@@ -85,87 +85,7 @@ public class SearchFragment extends Fragment {
 
         loading.setVisibility(View.INVISIBLE);
         initView();
-        return rootView;
-    }
 
-    View.OnClickListener search = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-//            String id = edtSearch.getText().toString();
-//
-//            loadData(id);
-
-//            Log.d(TAG, "onClick: " + id);
-        }
-    };
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable final Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-        BottomNavigationView navigationView = (BottomNavigationView) view.findViewById(R.id.navigation);
-
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_home:
-                        FragmentManager fragmentManager = getFragmentManager();
-                        if (fragmentManager != null){
-                            UpComingFragment upComingFragment = new UpComingFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, upComingFragment, UpComingFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_dashboard:
-                        FragmentManager fragmentManager1 = getFragmentManager();
-                        if (fragmentManager1 != null){
-                            NowPlayingFragment nowPlayingFragment = new NowPlayingFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager1.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, nowPlayingFragment, NowPlayingFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_notifications:
-                        break;
-                    case R.id.navigation_favorite:
-                        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
-
-                        Cursor cursor = null;
-                        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
-                                null, null, null, null);
-                        Objects.requireNonNull(cursor).moveToFirst();
-                        Favorite favorite;
-                        if (Objects.requireNonNull(cursor).getCount() > 0) {
-                            do {
-                                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
-                                        DatabaseContract.MovieColumns.ID)));
-                                favoriteArrayList.add(favorite);
-                                cursor.moveToNext();
-                            } while (!cursor.isAfterLast());
-                        }
-
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL_FAVORITE, favoriteArrayList);
-
-                        FragmentManager fragmentManager2 = getFragmentManager();
-                        if (fragmentManager2 != null){
-                            FavoriteFragment favoriteFragment = new FavoriteFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager2.beginTransaction();
-                            favoriteFragment.setArguments(bundle);
-
-                            fragmentTransaction.replace(R.id.container, favoriteFragment, FavoriteFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                }
-                return false;
-            }
-        });
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,6 +110,7 @@ public class SearchFragment extends Fragment {
             }
         });
 
+        return rootView;
     }
 
     void loadData(String id){

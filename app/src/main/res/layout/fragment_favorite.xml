@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/movie_model"
-            android:layout_above="@+id/navigation"
+            android:layout_marginBottom="60dp"
             />
 
         <ProgressBar
@@ -26,14 +26,14 @@
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_centerInParent="true" />
 
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="?android:attr/windowBackground"
-            app:menu="@menu/navigation"
-            />
+        <!--<android.support.design.widget.BottomNavigationView-->
+            <!--android:id="@+id/navigation"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:background="?android:attr/windowBackground"-->
+            <!--app:menu="@menu/navigation"-->
+            <!--/>-->
     </RelativeLayout>
 
 </FrameLayout>

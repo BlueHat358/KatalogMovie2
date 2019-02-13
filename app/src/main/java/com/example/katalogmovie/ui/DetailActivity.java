@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.katalogmovie.R;
+import com.example.katalogmovie.adapter.MovieAdapter;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.MovieResult;
 
@@ -33,6 +34,8 @@ public class DetailActivity extends AppCompatActivity {
     Button btn_favorite;
 
     MovieResult results;
+
+    MovieAdapter adapter;
 
 
     @Override

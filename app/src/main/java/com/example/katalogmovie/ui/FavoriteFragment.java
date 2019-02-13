@@ -83,57 +83,6 @@ public class FavoriteFragment extends Fragment {
         loading = rootView.findViewById(R.id.progress_circular);
         loading.setVisibility(View.INVISIBLE);
 
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-        BottomNavigationView navigationView = (BottomNavigationView) view.findViewById(R.id.navigation);
-
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_home:
-                        FragmentManager fragmentManager = getFragmentManager();
-                        if (fragmentManager != null){
-                            UpComingFragment upComingFragment = new UpComingFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, upComingFragment, UpComingFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_dashboard:
-                        FragmentManager fragmentManager1 = getFragmentManager();
-                        if (fragmentManager1 != null){
-                            NowPlayingFragment nowPlayingFragment = new NowPlayingFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager1.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, nowPlayingFragment, NowPlayingFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_notifications:
-                        FragmentManager fragmentManager2 = getFragmentManager();
-                        if (fragmentManager2 != null){
-                            SearchFragment searchFragment = new SearchFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager2.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, searchFragment, SearchFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_favorite:
-                        break;
-                }
-                return false;
-            }
-        });
-
         if (savedInstanceState == null && checkInternet()) {
             ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
             if (favorites.size() == 0) {
@@ -164,6 +113,8 @@ public class FavoriteFragment extends Fragment {
         else {
             Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
         }
+
+        return rootView;
     }
 
     private void getFavorite(String id) {
@@ -196,6 +147,7 @@ public class FavoriteFragment extends Fragment {
         });
     }
 
+
     void initView() {
 
         movieAdapter = new MovieAdapter(getActivity());
@@ -221,7 +173,7 @@ public class FavoriteFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (checkInternet()) {
-            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
+//            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
             outState.putInt(KEY_MOVIES,3);
             super.onSaveInstanceState(outState);
         }

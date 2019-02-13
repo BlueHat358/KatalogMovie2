@@ -5,34 +5,25 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.katalogmovie.MainActivity;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Favorite;
-import com.example.katalogmovie.model.FragmentHelper;
 import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
 import com.example.katalogmovie.network.Api;
@@ -85,78 +76,6 @@ public class UpComingFragment extends Fragment {
 //
 //        loadData();
 
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-        BottomNavigationView navigationView = (BottomNavigationView) view.findViewById(R.id.navigation);
-
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_home:
-
-                        break;
-                    case R.id.navigation_dashboard:
-                        FragmentManager fragmentManager1 = getFragmentManager();
-                        if (fragmentManager1 != null){
-                            NowPlayingFragment nowPlayingFragment = new NowPlayingFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager1.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, nowPlayingFragment, NowPlayingFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_notifications:
-                        FragmentManager fragmentManager = getFragmentManager();
-                        if (fragmentManager != null){
-                            SearchFragment searchFragment = new SearchFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            fragmentTransaction.replace(R.id.container, searchFragment, SearchFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                    case R.id.navigation_favorite:
-                        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
-
-                        Cursor cursor = null;
-                        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
-                                null, null, null, null);
-                        Objects.requireNonNull(cursor).moveToFirst();
-                        Favorite favorite;
-                        if (Objects.requireNonNull(cursor).getCount() > 0) {
-                            do {
-                                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
-                                        DatabaseContract.MovieColumns.ID)));
-                                favoriteArrayList.add(favorite);
-                                cursor.moveToNext();
-                            } while (!cursor.isAfterLast());
-                        }
-
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL_FAVORITE, favoriteArrayList);
-
-
-                        FragmentManager fragmentManager2 = getFragmentManager();
-                        if (fragmentManager2 != null){
-                            FavoriteFragment favoriteFragment = new FavoriteFragment();
-                            FragmentTransaction fragmentTransaction = fragmentManager2.beginTransaction();
-                            favoriteFragment.setArguments(bundle);
-
-                            fragmentTransaction.replace(R.id.container, favoriteFragment, FavoriteFragment.class.getSimpleName());
-                            fragmentTransaction.commit();
-                        }
-                        break;
-                }
-                return false;
-            }
-        });
 
         if (savedInstanceState == null && checkInternet()) {
             initView();
@@ -173,9 +92,9 @@ public class UpComingFragment extends Fragment {
             loading.setVisibility(View.GONE);
         }
 
-        FragmentHelper position = new FragmentHelper();
-        position.setPosition(0);
+        return rootView;
     }
+
 
     void loadData(){
         movieService = NetworkInterface.getClient().create(Api.class);

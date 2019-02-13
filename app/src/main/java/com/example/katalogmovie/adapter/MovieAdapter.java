@@ -53,6 +53,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return movieResultList.size();
     }
 
+    public void clear() {
+        movieResultList.clear();
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         RecyclerView rv_movie;

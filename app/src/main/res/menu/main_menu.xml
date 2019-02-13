@@ -5,10 +5,4 @@
         android:id="@+id/action_change_settings"
         android:title="@string/change_language_settings"
         app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_search"
-        android:title="search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView"/>
 </menu>
