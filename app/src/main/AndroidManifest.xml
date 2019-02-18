@@ -19,6 +19,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".alarm.ReleaseNotify"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <activity android:name=".Support.SettingAlarmActivity" />
+
+        <receiver
+            android:name=".alarm.DailyNotify"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver android:name=".widget.FavoriteWidget">
             <intent-filter>

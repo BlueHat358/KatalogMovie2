@@ -64,6 +64,7 @@ public class SearchFragment extends Fragment {
 
     Api movieService;
     Call<Movie> movieCall;
+    ArrayList<MovieResult> list = new ArrayList<>();
 
     ProgressBar loading;
 
@@ -84,26 +85,28 @@ public class SearchFragment extends Fragment {
         loading = rootView.findViewById(R.id.progress_circular);
 
         loading.setVisibility(View.INVISIBLE);
-        initView();
 
+        if (savedInstanceState != null && !checkInternet()){
+            initView();
+            list = savedInstanceState.getParcelableArrayList("list");
+            Log.d(TAG, "onCreateView: " + String.valueOf(list.size()));
+            movieAdapter.setMovieResultList(list);
+            rv_movie.setAdapter(movieAdapter);
+            loading.setVisibility(View.GONE);
+        }
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (savedInstanceState == null && checkInternet()) {
-                    String id = edtSearch.getText().toString();
+                if (checkInternet()) {
+
                     initView();
+                    String id = edtSearch.getText().toString();
                     loadData(id);
+
                     Log.d(TAG, "onViewCreated: " + id);
                 }
-                else if (savedInstanceState != null && checkInternet()){
-                    //movieList = savedInstanceState.getParcelableArrayList(KEY_MOVIES);
-                    String id = edtSearch.getText().toString();
-                    initView();
-                    loadData(id);
-                    Log.d(TAG, "onViewCreated1: " + id);
-                    //Log.d(TAG, "onViewCreated: " + movieList.size());
-                }
+
                 else {
                     Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
                 }
@@ -124,14 +127,18 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
                 if (response.body() != null) {
-                    movieList = Objects.requireNonNull(response.body()).getResults();
+                    List<MovieResult> movies = response.body().getResults();
+                    list.addAll(movies);
+
+                    movieAdapter.setMovieResultList(list);
+                    movieAdapter = new MovieAdapter(getActivity(), list);
+                    rv_movie.setAdapter(movieAdapter);
                 }
-                movieAdapter.setMovieResultList(movieList);
-                rv_movie.setAdapter(movieAdapter);
+
                 ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        showSelectedMovie(movieList.get(position));
+                        showSelectedMovie(list.get(position));
                     }
                 });
                 Log.d(TAG, "onResponse: " + movieList.size());
@@ -140,8 +147,8 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity(), "Something went wrong"
-                        , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+                loading.setVisibility(View.GONE);
             }
         });
     }
@@ -170,12 +177,10 @@ public class SearchFragment extends Fragment {
     }
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (checkInternet()) {
-            outState.putParcelableArrayList(KEY_MOVIES, (ArrayList<? extends Parcelable>) movieAdapter.getMovieResultList());
-            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
-            outState.putInt(KEY_MOVIES,2);
-            super.onSaveInstanceState(outState);
-        }
+        outState.putParcelableArrayList("list", list);
+
+        outState.putInt(KEY_MOVIES,2);
+        super.onSaveInstanceState(outState);
     }
 
 

@@ -6,20 +6,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Binder;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.model.Favorite;
-import com.example.katalogmovie.model.MovieResult;
 import com.example.katalogmovie.network.Api;
 
 import java.util.concurrent.ExecutionException;
@@ -84,12 +79,6 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
         Bitmap bmp = null;
         try {
-//            Bitmap preview = Glide.with(context)
-//                    .asBitmap()
-//                    .load(Api.image_url + favorite.getJudul())
-//                    .apply(new RequestOptions().fitCenter())
-//                    .submit()
-//                    .get();
 
             bmp = Glide.with(context)
                     .asBitmap()

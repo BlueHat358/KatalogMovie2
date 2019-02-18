@@ -21,19 +21,36 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     public static final String TAG = "TAG";
-
-    private List<MovieResult> movieResultList = new ArrayList<>();
+    private List<MovieResult> movieResultList;
     private Context context;
+    private ArrayList<MovieResult> resultArrayList;
 
-    public void setMovieResultList(List<MovieResult> movieResultList) {
-        this.movieResultList = movieResultList;
+    public ArrayList<MovieResult> getResultArrayList() {
+        return resultArrayList;
     }
+
+    public void setResultArrayList(ArrayList<MovieResult> resultArrayList) {
+        this.resultArrayList = new ArrayList<>();
+        this.resultArrayList.addAll(resultArrayList);
+        this.notifyDataSetChanged();
+    }
+
     public List<MovieResult> getMovieResultList() {
         return movieResultList;
     }
 
+    public void setMovieResultList(List<MovieResult> movieResultList) {
+        this.movieResultList = movieResultList;
+        this.notifyDataSetChanged();
+    }
+
+
     public MovieAdapter(Context context) {
         this.context = context;
+    }
+    public MovieAdapter(Context context, List<MovieResult> movieResults) {
+        this.context = context;
+        this.movieResultList = movieResults;
     }
 
     @NonNull

@@ -28,36 +28,24 @@
         />
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_Movie"
-        android:layout_width="match_parent"
-        android:layout_height="601dp"
-        android:layout_marginBottom="60dp"
-        android:layout_below="@+id/edt_search"
-        android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/movie_model"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_Movie"
+            android:layout_below="@+id/btn_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/movie_model"
+            android:layout_marginBottom="60dp"
+            />
 
-    <!--<android.support.design.widget.BottomNavigationView-->
-        <!--android:id="@+id/navigation"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--android:background="?android:attr/windowBackground"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:menu="@menu/navigation" />-->
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/progress_circular"
+            android:layout_below="@+id/btn_search"
             style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            />
 
 </RelativeLayout>
 

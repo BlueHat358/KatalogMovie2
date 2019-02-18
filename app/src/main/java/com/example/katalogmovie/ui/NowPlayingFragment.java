@@ -54,6 +54,7 @@ public class NowPlayingFragment extends Fragment {
     Call<Movie> movieCall;
 
     ProgressBar loading;
+    ArrayList<MovieResult> list = new ArrayList<>();
 
 
     public NowPlayingFragment() {
@@ -65,22 +66,28 @@ public class NowPlayingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
         loading = rootView.findViewById(R.id.progress_circular);
 
+        initView();
         if (savedInstanceState == null && checkInternet()) {
-            initView();
             loadData();
+
+        }
+        else if (savedInstanceState != null && !checkInternet()){
+            list = savedInstanceState.getParcelableArrayList("list");
+            Log.d(TAG, "onCreateView: " + String.valueOf(list.size()));
+            movieAdapter.setMovieResultList(list);
+            rv_movie.setAdapter(movieAdapter);
+            loading.setVisibility(View.GONE);
         }
         else if (savedInstanceState != null && checkInternet()){
-            movieList = savedInstanceState.getParcelableArrayList(KEY_MOVIES);
-            initView();
             loadData();
-            Log.d(TAG, "onViewCreated: " + movieList.size());
         }
-        else {
+        if (!checkInternet() && savedInstanceState == null){
             Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+            loading.setVisibility(View.GONE);
         }
 
         return rootView;
@@ -96,36 +103,47 @@ public class NowPlayingFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
                 if (response.body() != null) {
-                    movieList = Objects.requireNonNull(response.body()).getResults();
+                    List<MovieResult> movies = response.body().getResults();
+                    list.addAll(movies);
+                    movieAdapter.setMovieResultList(list);
+                    movieAdapter = new MovieAdapter(getActivity(), list);
+                    rv_movie.setAdapter(movieAdapter);
                 }
-                movieAdapter.setMovieResultList(movieList);
-                rv_movie.setAdapter(movieAdapter);
+
+
+                Log.d(TAG, "onResponse: " + movieList.size());
+
                 ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        showSelectedMovie(movieList.get(position));
+                        showSelectedMovie(list.get(position));
                     }
                 });
-                for (MovieResult i : movieList){
-                    Log.d(TAG, "onResponse: " + i.getimage());
-                }
                 loading.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
-                Toast.makeText(getActivity(), "Something went wrong"
-                        , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+                loading.setVisibility(View.GONE);
             }
         });
     }
 
-    void initView() {
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        outState.putParcelableArrayList("list", list);
 
-        movieAdapter = new MovieAdapter(getActivity());
+        outState.putInt(KEY_MOVIES,1);
+        super.onSaveInstanceState(outState);
+    }
+
+    void initView() {
+        movieAdapter = new MovieAdapter(getActivity(), movieList);
         rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_movie.setHasFixedSize(true);
         rv_movie.setItemAnimator(new DefaultItemAnimator());
+
     }
 
     public boolean checkInternet(){
@@ -142,16 +160,6 @@ public class NowPlayingFragment extends Fragment {
         }
         return connectStatus;
     }
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (checkInternet()) {
-            outState.putParcelableArrayList(KEY_MOVIES, (ArrayList<? extends Parcelable>) movieAdapter.getMovieResultList());
-            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
-            outState.putInt(KEY_MOVIES,1);
-            super.onSaveInstanceState(outState);
-        }
-    }
-
 
     private void showSelectedMovie(MovieResult movie){
         Intent intent = new Intent(getActivity(), DetailActivity.class);

@@ -35,8 +35,6 @@ public class DetailActivity extends AppCompatActivity {
 
     MovieResult results;
 
-    MovieAdapter adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +78,9 @@ public class DetailActivity extends AppCompatActivity {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(DatabaseContract.MovieColumns.ID, id);
                 contentValues.put(DatabaseContract.MovieColumns.JUDUL, results.getimage());
-                Log.d(TAG, "onClick: " + results.getimage());
                 getContentResolver().insert(DatabaseContract.CONTENT_URI, contentValues);
                 Toast.makeText(DetailActivity.this, "Movie has been added", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "onClick: " + results.getimage());
                 btn_favorite.setText("Remove");
             }
             else {

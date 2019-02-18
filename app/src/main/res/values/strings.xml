@@ -4,8 +4,6 @@
     <string name="title_dashboard">NowPlaying</string>
     <string name="title_notifications">Search</string>
 
-    <string name="upcoming">UpComing</string>
-    <string name="now_playing">Now Playing</string>
     <string name="search">Search</string>
     <string name="release">Release Date:</string>
     <string name="description">Description:</string>
@@ -13,9 +11,9 @@
     <string name="vote">Vote Count</string>
     <string name="change_language_settings">Change Language Settings</string>
     <string name="favorite">Favorite</string>
+    <string name="setting">Setting</string>
+    <string name="daily">Daily Reminder</string>
+    <string name="notify_release">Release Reminder</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
 </resources>

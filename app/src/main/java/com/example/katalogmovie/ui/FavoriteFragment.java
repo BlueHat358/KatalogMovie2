@@ -3,6 +3,7 @@ package com.example.katalogmovie.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
 import com.example.katalogmovie.adapter.MovieAdapter;
+import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Favorite;
 import com.example.katalogmovie.model.Movie;
 import com.example.katalogmovie.model.MovieResult;
@@ -35,6 +37,7 @@ import com.example.katalogmovie.network.NetworkInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,45 +77,9 @@ public class FavoriteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-        movieList = new ArrayList<>();
-        movieResult = new MovieResult();
-
         View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         rv_movie = rootView.findViewById(R.id.rv_Movie);
         loading = rootView.findViewById(R.id.progress_circular);
-        loading.setVisibility(View.INVISIBLE);
-
-        if (savedInstanceState == null && checkInternet()) {
-            ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
-            if (favorites.size() == 0) {
-                Toast.makeText(getActivity(), "No favorite has been added", 10).show();
-            }
-            else {
-
-                Log.d(TAG, "onCreateView: " + favorites.size());
-
-                for (Favorite i : favorites) {
-                    Log.d(TAG, "onCreateView: " + i.getId());
-                    initView();
-                    getFavorite(i.getId());
-                }
-            }
-        }
-        else if (savedInstanceState != null && checkInternet()){
-            ArrayList<Favorite> favorites = getArguments().getParcelableArrayList(EXTRA_DETAIL_FAVORITE);
-            initView();
-            Log.d(TAG, "onCreateView: " + favorites.size());
-
-            for (Favorite i : favorites) {
-                Log.d(TAG, "onCreateView: " + i.getId());
-                initView();
-                getFavorite(i.getId());
-            }
-        }
-        else {
-            Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
-        }
 
         return rootView;
     }
@@ -173,7 +140,6 @@ public class FavoriteFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (checkInternet()) {
-//            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
             outState.putInt(KEY_MOVIES,3);
             super.onSaveInstanceState(outState);
         }
@@ -187,6 +153,57 @@ public class FavoriteFragment extends Fragment {
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getid());
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getjudul());
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
+
+        Cursor cursor = null;
+        cursor = getActivity().getContentResolver().query(DatabaseContract.CONTENT_URI, null,
+                null, null, null, null);
+        Objects.requireNonNull(cursor).moveToFirst();
+        Favorite favorite;
+        if (Objects.requireNonNull(cursor).getCount() > 0) {
+            do {
+                favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
+                        DatabaseContract.MovieColumns.ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(
+                                DatabaseContract.MovieColumns.JUDUL)));
+                favoriteArrayList.add(favorite);
+                cursor.moveToNext();
+            } while (!cursor.isAfterLast());
+        }
+        Log.d(TAG, "onResume: " + favoriteArrayList.size());
+
+
+        movieList = new ArrayList<>();
+        if (movieAdapter != null){
+            movieAdapter.clear();
+        }
+
+        loading.setVisibility(View.INVISIBLE);
+
+        if (checkInternet()) {
+            if (favoriteArrayList.size() == 0) {
+                Toast.makeText(getActivity(), "No favorite has been added", 10).show();
+            }
+            else {
+
+                Log.d(TAG, "onCreateView: " + favoriteArrayList.size());
+
+                for (Favorite i : favoriteArrayList) {
+                    Log.d(TAG, "onCreateView: " + i.getId());
+                    initView();
+                    getFavorite(i.getId());
+                }
+            }
+        }
+        if (!checkInternet()){
+            Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+        }
     }
 
 }

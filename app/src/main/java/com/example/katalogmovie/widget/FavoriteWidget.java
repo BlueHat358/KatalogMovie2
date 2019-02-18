@@ -20,6 +20,7 @@ public class FavoriteWidget extends AppWidgetProvider {
         Intent intent = new Intent(context, StackWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.favorite_widget);

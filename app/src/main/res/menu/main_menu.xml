@@ -5,4 +5,9 @@
         android:id="@+id/action_change_settings"
         android:title="@string/change_language_settings"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/setting"
+        android:title="@string/setting"
+        app:showAsAction="never"/>
 </menu>

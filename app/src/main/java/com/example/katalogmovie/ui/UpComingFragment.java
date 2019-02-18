@@ -2,6 +2,7 @@ package com.example.katalogmovie.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.katalogmovie.R;
 import com.example.katalogmovie.Support.ItemClickSupport;
+import com.example.katalogmovie.Support.SettingAlarmActivity;
 import com.example.katalogmovie.adapter.MovieAdapter;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Favorite;
@@ -38,6 +41,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.katalogmovie.Support.FragmentHelper.KEY_MOVIES;
+import static com.example.katalogmovie.Support.FragmentHelper.MOVIE_ARRAY;
 import static com.example.katalogmovie.ui.DetailActivity.EXTRA_DETAIL;
 
 
@@ -57,7 +61,7 @@ public class UpComingFragment extends Fragment {
     Call<Movie> movieCall;
 
     ProgressBar loading;
-
+    ArrayList<MovieResult> list = new ArrayList<>();
 
     public UpComingFragment() {
         // Required empty public constructor
@@ -72,22 +76,22 @@ public class UpComingFragment extends Fragment {
         rv_movie = rootView.findViewById(R.id.rv_Movie);
         loading = rootView.findViewById(R.id.progress_circular);
 
-//        initView();
-//
-//        loadData();
-
-
+        initView();
         if (savedInstanceState == null && checkInternet()) {
-            initView();
             loadData();
+
+        }
+        else if (savedInstanceState != null && !checkInternet()){
+            list = savedInstanceState.getParcelableArrayList("list");
+            Log.d(TAG, "onCreateView: " + String.valueOf(list.size()));
+            movieAdapter.setMovieResultList(list);
+            rv_movie.setAdapter(movieAdapter);
+            loading.setVisibility(View.GONE);
         }
         else if (savedInstanceState != null && checkInternet()){
-            movieList = savedInstanceState.getParcelableArrayList(KEY_MOVIES);
-            initView();
             loadData();
-            Log.d(TAG, "onViewCreated: " + movieList.size());
         }
-        else {
+        if (!checkInternet() && savedInstanceState == null){
             Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
             loading.setVisibility(View.GONE);
         }
@@ -106,16 +110,20 @@ public class UpComingFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
                 if (response.body() != null) {
-                    movieList = Objects.requireNonNull(response.body()).getResults();
+                    List<MovieResult> movies = response.body().getResults();
+                    list.addAll(movies);
+                    movieAdapter.setMovieResultList(list);
+                    movieAdapter = new MovieAdapter(getActivity(), list);
+                    rv_movie.setAdapter(movieAdapter);
                 }
-                movieAdapter.setMovieResultList(movieList);
-                rv_movie.setAdapter(movieAdapter);
+
+
                 Log.d(TAG, "onResponse: " + movieList.size());
 
                 ItemClickSupport.addTo(rv_movie).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        showSelectedMovie(movieList.get(position));
+                        showSelectedMovie(list.get(position));
                     }
                 });
                 loading.setVisibility(View.GONE);
@@ -123,40 +131,40 @@ public class UpComingFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Movie> call, @NonNull Throwable t) {
-
+                Toast.makeText(getActivity(), "Please make sure connected Internet", 15).show();
+                loading.setVisibility(View.GONE);
             }
         });
     }
 
     public boolean checkInternet(){
-        boolean connectStatus = true;
+        boolean connectStatus;
         ConnectivityManager ConnectionManager=(ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = ConnectionManager.getActiveNetworkInfo();
         if(networkInfo != null && (networkInfo).isConnected()==true ) {
             connectStatus = true;
-            Log.d(TAG, "checkInternet: " + connectStatus);
         }
         else {
             connectStatus = false;
-            Log.d(TAG, "checkInternet: " + connectStatus);
         }
+        Log.d(TAG, "checkInternet: " + connectStatus);
         return connectStatus;
     }
+
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (checkInternet()) {
-            outState.putParcelableArrayList(KEY_MOVIES, (ArrayList<? extends Parcelable>) movieAdapter.getMovieResultList());
-            Log.d(TAG, "onSaveInstanceState: " + movieAdapter.getItemCount());
-            outState.putInt(KEY_MOVIES,0);
-            super.onSaveInstanceState(outState);
-        }
+    public void onSaveInstanceState(final Bundle outState) {
+        outState.putParcelableArrayList("list", list);
+
+        outState.putInt(KEY_MOVIES,0);
+        super.onSaveInstanceState(outState);
     }
 
     void initView() {
-        movieAdapter = new MovieAdapter(getActivity());
+        movieAdapter = new MovieAdapter(getActivity(), movieList);
         rv_movie.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_movie.setHasFixedSize(true);
         rv_movie.setItemAnimator(new DefaultItemAnimator());
+
     }
 
     private void showSelectedMovie(MovieResult movie){

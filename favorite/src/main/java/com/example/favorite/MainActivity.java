@@ -1,7 +1,10 @@
 package com.example.favorite;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -13,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.favorite.Support.ItemClickSupport;
 import com.example.favorite.adapter.MovieAdapter;
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity
     ArrayList<Favorite> favorites;
     Api api;
 
+    ProgressBar loading;
+
     private final int MOVIE_ID = 110;
 
     @Override
@@ -54,6 +61,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.rv_Movie);
+        loading = findViewById(R.id.progress_circular);
 
         adapter = new MovieAdapter(getApplicationContext());
         initView();
@@ -71,6 +79,7 @@ public class MainActivity extends AppCompatActivity
     @NonNull
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        loading.setVisibility(View.VISIBLE);
         favorites = new ArrayList<>();
         movieResults = new ArrayList<>();
         return new CursorLoader(this, CONTENT_URI,
@@ -84,6 +93,14 @@ public class MainActivity extends AppCompatActivity
             loadData(i.getId());
             Log.d(TAG, "onLoadFinished: " + i.getId());
             //adapter.notifyDataSetChanged();
+        }
+        if (favorites.isEmpty()){
+            loading.setVisibility(View.GONE);
+            Toast.makeText(this, "No favorite added", Toast.LENGTH_LONG).show();
+        }
+        if (!favorites.isEmpty() && !checkInternet()){
+            loading.setVisibility(View.GONE);
+            Toast.makeText(this, "Your internet is not connected", 15).show();
         }
     }
 
@@ -104,6 +121,7 @@ public class MainActivity extends AppCompatActivity
                 recyclerView.setAdapter(adapter);
                 //adapter.notifyDataSetChanged();
                 Log.d(TAG, "onResponse: " + movieResults.size());
+                loading.setVisibility(View.GONE);
 
                 ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
@@ -158,6 +176,20 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "showSelectedMovie() returned: " + movie.getrating());
         Log.d(TAG, "showSelectedMovie: " + movie.getdeskripsi());
         startActivity(intent);
+    }
+
+    public boolean checkInternet(){
+        boolean connectStatus;
+        ConnectivityManager ConnectionManager=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && (networkInfo).isConnected()==true ) {
+            connectStatus = true;
+        }
+        else {
+            connectStatus = false;
+        }
+        Log.d(TAG, "checkInternet: " + connectStatus);
+        return connectStatus;
     }
 }
 

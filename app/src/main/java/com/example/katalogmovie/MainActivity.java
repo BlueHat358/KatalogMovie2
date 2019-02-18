@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.katalogmovie.Support.SettingAlarmActivity;
 import com.example.katalogmovie.db.DatabaseContract;
 import com.example.katalogmovie.model.Favorite;
 import com.example.katalogmovie.ui.FavoriteFragment;
@@ -88,29 +89,8 @@ public class MainActivity extends AppCompatActivity {
                             , SearchFragment.class.getSimpleName()).commit();
                     return true;
                 case R.id.navigation_favorite:
-                    ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
-
-                    Cursor cursor = null;
-                    cursor = getContentResolver().query(DatabaseContract.CONTENT_URI, null,
-                            null, null, null, null);
-                    Objects.requireNonNull(cursor).moveToFirst();
-                    Favorite favorite;
-                    if (Objects.requireNonNull(cursor).getCount() > 0) {
-                        do {
-                            favorite = new Favorite(cursor.getString(cursor.getColumnIndexOrThrow(
-                                            DatabaseContract.MovieColumns.ID)),
-                                    cursor.getString(cursor.getColumnIndexOrThrow(
-                                            DatabaseContract.MovieColumns.JUDUL)));
-                            favoriteArrayList.add(favorite);
-                            cursor.moveToNext();
-                        } while (!cursor.isAfterLast());
-                    }
-
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelableArrayList(FavoriteFragment.EXTRA_DETAIL_FAVORITE, favoriteArrayList);
 
                     FavoriteFragment favoriteFragment = new FavoriteFragment();
-                    favoriteFragment.setArguments(bundle);
 
                     fragmentTransaction.replace(R.id.container, favoriteFragment
                             , FavoriteFragment.class.getSimpleName()).commit();
@@ -131,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_change_settings){
             Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
             startActivity(mIntent);
+        }
+        if (item.getItemId() == R.id.setting){
+            Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
